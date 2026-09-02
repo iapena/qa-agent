@@ -1,0 +1,24 @@
+{
+  "issueId": "BIRD-042",
+  "testCaseId": "TC-017",
+  "title": "Login exitoso con credenciales válidas",
+  "steps": [
+    "Navegar a /login en staging",
+    "Ingresar usuario válido",
+    "Ingresar contraseña válida",
+    "Presionar 'Iniciar sesión'"
+  ],
+  "expectedResult": "El usuario es redirigido al dashboard",
+  "actualResult": "La página se queda cargando y no redirige",
+  "severity": "high",
+  "testType": "positive",
+  "gherkin": {
+    "given": "Un usuario registrado en staging",
+    "when": "Inicia sesión con credenciales válidas",
+    "then": "Es redirigido al dashboard"
+  },
+  "testData": {
+    "userRef": "STAGING_TEST_USER",
+    "note": "Credenciales reales en .env, no aquí"
+  }
+}

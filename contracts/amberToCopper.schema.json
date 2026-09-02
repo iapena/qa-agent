@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "amberToCopper",
+  "description": "Data contract for the Amber to Copper handoff.",
+  "type": "object",
+  "required": ["issueId", "testCaseId", "title", "steps", "expectedResult", "actualResult", "testType", "gherkin"],
+  "properties": {
+    "issueId": {
+      "type": "string",
+      "description": "Original GitLab bug id. Traceability: bug -> test case -> script."
+    },
+    "testCaseId": {
+      "type": "string",
+      "description": "Amber-authored test case id."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable script identifier."
+    },
+    "steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Ordered logical steps. Each item is one atomic step."
+    },
+    "expectedResult": {
+      "type": "string",
+      "description": "Expected behavior. Basis for assertions."
+    },
+    "actualResult": {
+      "type": "string",
+      "description": "Observed behavior. Helps decide edge cases."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "default": "medium",
+      "description": "Single source of truth. Copper derives target suite (smoke/regression) from this."
+    },
+    "testType": {
+      "type": "string",
+      "enum": ["positive", "negative", "edge"],
+      "description": "Drives assertion strategy (expect success vs expect error)."
+    },
+    "gherkin": {
+      "type": "object",
+      "required": ["given", "when", "then"],
+      "description": "Given-When-Then. Maps ~1:1 to Playwright: given->setup, when->action, then->assertion.",
+      "properties": {
+        "given": { "type": "string" },
+        "when": { "type": "string" },
+        "then": { "type": "string" }
+      }
+    },
+    "testData": {
+      "type": "object",
+      "description": "Optional. Non-sensitive inputs only. Real credentials live in .env, never here.",
+      "additionalProperties": true
+    }
+  }
+}

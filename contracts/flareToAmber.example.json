@@ -1,0 +1,20 @@
+{
+  "issueId": "BIRD-042",
+  "feature": "Login",
+  "stepsToReproduce": [
+    "Ir a /login en staging",
+    "Ingresar credenciales válidas",
+    "Presionar 'Iniciar sesión'"
+  ],
+  "expectedResult": "El usuario accede al dashboard",
+  "actualResult": "La página se queda cargando y no redirige",
+  "severity": "high",
+  "discoveredBusinessRules": [
+    {
+      "rule": "El botón se deshabilita tras 3 intentos fallidos",
+      "confidence": "medium",
+      "needsHumanValidation": true
+    }
+  ],
+  "rawError": null
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "flareToAmber",
+  "description": "Data contract for the Flare to Amber handoff.",
+  "type": "object",
+  "required": ["issueId", "feature", "stepsToReproduce", "expectedResult", "actualResult"],
+  "properties": {
+    "issueId": {
+      "type": "string",
+      "description": "GitLab issue identifier (traceability)."
+    },
+    "feature": {
+      "type": "string",
+      "description": "Feature or module under test."
+    },
+    "stepsToReproduce": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Ordered reproduction steps."
+    },
+    "expectedResult": {
+      "type": "string",
+      "description": "The expected behavior."
+    },
+    "actualResult": {
+      "type": "string",
+      "description": "The observed behavior (the delta)."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "default": "medium",
+      "description": "Priority hint for test coverage depth. Defaults to medium if absent."
+    },
+    "discoveredBusinessRules": {
+      "type": "array",
+      "description": "Optional. Business rules inferred by Flare — hypotheses, not facts.",
+      "items": {
+        "type": "object",
+        "required": ["rule", "confidence", "needsHumanValidation"],
+        "properties": {
+          "rule": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "needsHumanValidation": { "type": "boolean" }
+        }
+      }
+    },
+    "rawError": {
+      "type": ["string", "null"],
+      "description": "Optional. Raw stack trace. May be null; not currently produced by manual bug reports."
+    }
+  }
+}
