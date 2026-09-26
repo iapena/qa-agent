@@ -43,6 +43,7 @@ per the universal startup protocol (AGENTS.md, section 7).
 
 **Input validation**
 - Before doing any work, the payload MUST be valid against `amberToCopper.schema.json`: all required fields present, `testType` within enum, `gherkin` complete (given/when/then).
+- Registry check: the payload's `testCaseId` MUST exist in TEST_CASES.md with status `approved`. Any other status (`proposed`, `automated`, `deprecated`, `rejected`) or an absent id -> HALT + report. Rationale: `proposed` is not yet human-approved, `automated` means a spec already exists (duplicate), `deprecated` / `rejected` must not be automated. TEST_CASES.md format lives in that file, not here.
 - `severity` absent -> defaults to `medium` (per schema). `testData` MAY be absent.
 - Invalid or incomplete payload -> HALT + report. Copper does not attempt to fix or complete a broken payload (AGENTS.md section 8: no handoff without a valid JSON contract).
 
@@ -58,6 +59,7 @@ per the universal startup protocol (AGENTS.md, section 7).
 **Copper-specific startup step**
 - Before generating anything, inventory the existing locators (`*Locator.ts`) and page objects (`*Page.ts`) relevant to the payload's feature.
 - Purpose: decide reuse vs. create. Reuse what already exists; do not duplicate. (Reuse rule detailed in File Outputs & Naming.)
+- Read TEST_CASES.md to validate the payload's `testCaseId` (see Inputs / Outputs, registry check). As shared memory, this read belongs to the universal startup protocol once AGENTS.md lists TEST_CASES.md; noted here until then.
 
 ## 4. Closing Protocol
  
@@ -67,6 +69,7 @@ per the universal startup protocol (AGENTS.md, section 7).
 **Copper-specific closing**
 - Closing condition: does not declare a task DONE until the self-check passes green on staging (see Execution / Self-check). "Looks like it works" is not DONE.
 - Clean branch before closing: no debug `console.log`, and no `test.only` left behind. A stray `test.only` runs a single test and hides the rest - a false green that violates the "all green" rule.
+- Test case registry: on close, Copper proposes the TEST_CASES.md status transition `approved -> automated` for its `testCaseId`, as part of its branch artifacts. The transition is applied on merge (human gate), never before: `automated` means the spec is on main, so spec and registry land atomically. Writing to TEST_CASES.md is an approval gate (agents propose, human applies).
 - Findings Copper proposes (its domain):
   - KNOWN_ISSUES.md: harness quirks it hits, typically flaky locators and staging timings (e.g. post-deploy 503 windows).
   - DECISIONS.md: contract-to-code mapping choices.
@@ -218,7 +221,7 @@ truth: `severity` (from the amberToCopper payload) decides suite membership.
   - If the spec file does not exist: create it with this `test()`.
   - If it already exists: append the new `test()` to it.
 - Copper only ADDS a new `test()`. It never edits or deletes neighboring `test()` blocks already in the file. Modifying or deleting an existing test is a human gate (see Guardrails).
-- If a `test()` with the same testCaseId already exists in the spec: HALT and report. Do not duplicate, do not overwrite (overwriting is a gate).
+- If a `test()` with the same testCaseId already exists in the spec: HALT and report. Do not duplicate, do not overwrite (overwriting is a gate). This spec-level check is distinct from the registry check (Inputs / Outputs): the registry validates the id is `approved` upstream; this validates it is not already implemented here.
 
 **Naming**
 - Follow the file naming rules in AGENTS.md, section 5 (specs, locators, page objects). This config does not restate them.
