@@ -81,7 +81,7 @@ Harness base de **QA Agent Flamme**. Todos los agentes leen este archivo (`AGENT
 - Locators: `<feature>Locator.ts` → loginLocator.ts (camelCase)
 - Page Objects: `<Feature>Page.ts` → LoginPage.ts (PascalCase, es clase)
 - Agent configs: `<agent>.config.md` → flare.config.md
-- Memory: KNOWN_ISSUES.md · ENVIRONMENT.md · DECISIONS.md
+- Memory: KNOWN_ISSUES.md · ENVIRONMENT.md · DECISIONS.md · TEST_CASES.md
 - Bitácora: progress/current.md · progress/history.md
 - Env: .env (nunca commiteado) · .env.example (commiteado, sin valores)
 
@@ -92,7 +92,7 @@ Harness base de **QA Agent Flamme**. Todos los agentes leen este archivo (`AGENT
 ```
 qa-agent/
 ├── AGENTS.md · README.md
-├── DECISIONS.md · KNOWN_ISSUES.md · ENVIRONMENT.md
+├── DECISIONS.md · KNOWN_ISSUES.md · ENVIRONMENT.md · TEST_CASES.md
 ├── .env.example · .env · .gitignore
 ├── .mcp.json                 # config de MCP servers a consumir (ej. GitLab)
 ├── package.json · playwright.config.ts
@@ -139,8 +139,8 @@ Toda escritura respeta los Approval Gates.
 **Read / Write por agente**
 
 - Flare: lee contrato flareToAmber → escribe triage report (a GitLab, gate)
-- Amber: lee flareToAmber, amberToCopper → escribe test cases / matrices (propone)
-- Copper: lee amberToCopper, locators, pages → escribe specs + locators (branch, gate)
+- Amber: lee flareToAmber, amberToCopper, TEST_CASES.md → escribe test cases / matrices + reserva ID en TEST_CASES.md (propone)
+- Copper: lee amberToCopper, locators, pages, TEST_CASES.md → escribe specs + locators + transición a automated en TEST_CASES.md (branch, gate)
 - Zenith: lee TODO (orquestador) → coordina y valida gates
 
 ---
@@ -169,6 +169,7 @@ Toda escritura respeta los Approval Gates.
 **Cierre de sesión**
 
 - Correr los tests → todo en verde antes de cerrar (`npx playwright test`).
+    - Aplica solo a agentes Modelo B (Copper). Para Modelo A (Amber/Flare/Zenith, propose-only) no hay test-run: DONE = propuesta schema-valid y aprobada por Benito.
 - Si la tarea quedó terminada: mover el resumen de progress/current.md al final de progress/history.md, y vaciar current.md dejando la plantilla.
 - Higiene: sin archivos temporales, sin console.log de debug, sin TODOs sin contexto.
 
